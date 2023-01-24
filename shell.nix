@@ -6,9 +6,6 @@ in
     name = "stable-diffusion-webui";
     buildInputs = [
       libdrm
-      git # The program instantly crashes if git is not present, even if everything is already downloaded
-      python310
-      python310Packages.pip
       stdenv.cc.cc.lib
 	  libGL
 	  glib

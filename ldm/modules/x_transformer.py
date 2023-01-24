@@ -5,7 +5,7 @@ import torch.nn.functional as F
 from functools import partial
 from inspect import isfunction
 from collections import namedtuple
-from einops import rearrange, repeat, reduce
+from einops import rearrange
 
 # constants
 
@@ -85,11 +85,6 @@ def max_neg_value(tensor):
 
 # keyword argument helpers
 
-def pick_and_pop(keys, d):
-    values = list(map(lambda key: d.pop(key), keys))
-    return dict(zip(keys, values))
-
-
 def group_dict_by_key(cond, d):
     return_val = [dict(), dict()]
     for key in d.keys():
@@ -101,10 +96,6 @@ def group_dict_by_key(cond, d):
 
 def string_begins_with(prefix, str):
     return str.startswith(prefix)
-
-
-def group_by_key_prefix(prefix, d):
-    return group_dict_by_key(partial(string_begins_with, prefix), d)
 
 
 def groupby_prefix_and_trim(prefix, d):
