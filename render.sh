@@ -20,4 +20,4 @@ pip install kornia
 
 echo Running TXT2IMG
 
-python txt2img.py --ckpt ~/v1-5-pruned-emaonly.ckpt --n_samples 1 --n_iter 1 --H 256 --W 256 --prompt "a turtle with a horse on the back, by greg ruthkowski" 
+python txt2img.py --ckpt ~/v1-5-pruned-emaonly.ckpt --n_iter 1 --H 256 --W 256 --prompt "a turtle with a horse on the back, by greg ruthkowski" 
