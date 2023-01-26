@@ -10,14 +10,18 @@ from pytorch_lightning import seed_everything
 from torch import autocast
 from contextlib import nullcontext
 
-from ldm.util import instantiate_from_config
+from ldm.util import get_obj_from_str
 from ldm.models.diffusion.ddim import DDIMSampler
 from ldm.models.diffusion.plms import PLMSSampler
 from ldm.models.diffusion.dpm_solver import DPMSolverSampler
+from ldm.models.diffusion.ddpm import LatentDiffusion
 
 def chunk(it, size):
     it = iter(it)
     return iter(lambda: tuple(islice(it, size)), ())
+
+def instantiate_from_config(config) -> LatentDiffusion:
+    return get_obj_from_str(config["target"])(**config.get("params", dict()))
 
 
 def load_model_from_config(config, ckpt, verbose=False):
