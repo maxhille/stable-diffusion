@@ -94,12 +94,6 @@ def main():
         help="ddim eta (eta=0.0 corresponds to deterministic sampling",
     )
     parser.add_argument(
-        "--n_iter",
-        type=int,
-        default=2,
-        help="sample this often",
-    )
-    parser.add_argument(
         "--H",
         type=int,
         default=512,
@@ -188,34 +182,31 @@ def main():
     with torch.no_grad():
         with precision_scope("cuda"):
             with model.ema_scope():
-                for _ in trange(opt.n_iter, desc="Sampling"):
-                    uc = None
-                    if opt.scale != 1.0:
-                        uc = model.get_learned_conditioning([""])
-                    c = model.get_learned_conditioning([prompt])
-                    shape = [opt.C, opt.H // opt.f, opt.W // opt.f]
-                    samples_ddim, _ = sampler.sample(S=opt.ddim_steps,
-                                                     conditioning=c,
-                                                     batch_size=1,
-                                                     shape=shape,
-                                                     verbose=False,
-                                                     unconditional_guidance_scale=opt.scale,
-                                                     unconditional_conditioning=uc,
-                                                     eta=opt.ddim_eta,
-                                                     x_T=start_code)
+                uc = model.get_learned_conditioning([""])
+                c = model.get_learned_conditioning([prompt])
+                shape = [opt.C, opt.H // opt.f, opt.W // opt.f]
+                samples_ddim, _ = sampler.sample(S=opt.ddim_steps,
+                                                 conditioning=c,
+                                                 batch_size=1,
+                                                 shape=shape,
+                                                 verbose=False,
+                                                 unconditional_guidance_scale=opt.scale,
+                                                 unconditional_conditioning=uc,
+                                                 eta=opt.ddim_eta,
+                                                 x_T=start_code)
 
-                    x_samples_ddim = model.decode_first_stage(samples_ddim)
-                    x_samples_ddim = torch.clamp((x_samples_ddim + 1.0) / 2.0, min=0.0, max=1.0)
-                    x_samples_ddim = x_samples_ddim.cpu().permute(0, 2, 3, 1).numpy()
+                x_samples_ddim = model.decode_first_stage(samples_ddim)
+                x_samples_ddim = torch.clamp((x_samples_ddim + 1.0) / 2.0, min=0.0, max=1.0)
+                x_samples_ddim = x_samples_ddim.cpu().permute(0, 2, 3, 1).numpy()
 
-                    x_image_torch = torch.from_numpy(x_samples_ddim).permute(0, 3, 1, 2)
+                x_image_torch = torch.from_numpy(x_samples_ddim).permute(0, 3, 1, 2)
 
-                    if not opt.skip_save:
-                        for x_sample in x_image_torch:
-                            x_sample = 255. * rearrange(x_sample.cpu().numpy(), 'c h w -> h w c')
-                            img = Image.fromarray(x_sample.astype(np.uint8))
-                            img.save(os.path.join(sample_path, f"{base_count:05}.png"))
-                            base_count += 1
+                if not opt.skip_save:
+                    for x_sample in x_image_torch:
+                        x_sample = 255. * rearrange(x_sample.cpu().numpy(), 'c h w -> h w c')
+                        img = Image.fromarray(x_sample.astype(np.uint8))
+                        img.save(os.path.join(sample_path, f"{base_count:05}.png"))
+                        base_count += 1
 
     print(f"Your samples are ready and waiting for you here: \n{outpath} \n"
           f" \nEnjoy.")
