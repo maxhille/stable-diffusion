@@ -6,7 +6,6 @@ from omegaconf import OmegaConf
 from tqdm import trange
 from itertools import islice
 from einops import rearrange
-import time
 from pytorch_lightning import seed_everything
 from torch import autocast
 from contextlib import nullcontext
@@ -185,7 +184,6 @@ def main():
     with torch.no_grad():
         with precision_scope("cuda"):
             with model.ema_scope():
-                tic = time.time()
                 for n in trange(opt.n_iter, desc="Sampling"):
                     uc = None
                     if opt.scale != 1.0:
@@ -214,8 +212,6 @@ def main():
                             img = Image.fromarray(x_sample.astype(np.uint8))
                             img.save(os.path.join(sample_path, f"{base_count:05}.png"))
                             base_count += 1
-
-                toc = time.time()
 
     print(f"Your samples are ready and waiting for you here: \n{outpath} \n"
           f" \nEnjoy.")
