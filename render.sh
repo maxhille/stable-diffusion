@@ -14,8 +14,6 @@ pip install transformers
 pip install omegaconf
 pip install -e git+https://github.com/CompVis/taming-transformers.git@master#egg=taming-transformers
 pip install kornia
-pip install invisible-watermark
-pip install opencv-python
 
 echo Running TXT2IMG
 
