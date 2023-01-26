@@ -2,6 +2,9 @@
 
 python3 -m venv venv
 source venv/bin/activate
+
+pip install pip==22.3.1
+
 #pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 --extra-index-url https://download.pytorch.org/whl/cu113
 # https://stackoverflow.com/a/73582465
 export HSA_OVERRIDE_GFX_VERSION=10.3.0
