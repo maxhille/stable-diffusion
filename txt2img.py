@@ -7,7 +7,7 @@ from tqdm import trange
 from itertools import islice
 from einops import rearrange
 from pytorch_lightning import seed_everything
-from torch import autocast
+from torch.amp.autocast_mode import autocast
 from contextlib import nullcontext
 
 from ldm.util import get_obj_from_str
@@ -188,7 +188,7 @@ def main():
     with torch.no_grad():
         with precision_scope("cuda"):
             with model.ema_scope():
-                for n in trange(opt.n_iter, desc="Sampling"):
+                for _ in trange(opt.n_iter, desc="Sampling"):
                     uc = None
                     if opt.scale != 1.0:
                         uc = model.get_learned_conditioning([""])
